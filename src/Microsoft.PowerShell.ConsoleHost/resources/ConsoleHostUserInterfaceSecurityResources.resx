@@ -120,6 +120,9 @@
   <data name="PromptForCredential_User" xml:space="preserve">
     <value>User: </value>
   </data>
+  <data name="PromptForCredential_UserWithDefault" xml:space="preserve">
+    <value>User (default: {0}): </value>
+  </data>
   <data name="PromptForCredential_Password" xml:space="preserve">
     <value>Password for user {0}: </value>
   </data>

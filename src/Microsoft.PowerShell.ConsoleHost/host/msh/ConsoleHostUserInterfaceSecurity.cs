@@ -67,6 +67,7 @@ namespace Microsoft.PowerShell
             SecureString password = null;
             string userPrompt = null;
             string passwordPrompt = null;
+            string userNameFromConsole = null;
 
             if (!string.IsNullOrEmpty(caption))
             {
@@ -81,9 +82,11 @@ namespace Microsoft.PowerShell
                 WriteLineToConsole(WrapToCurrentWindowWidth(message));
             }
 
-            if (string.IsNullOrEmpty(userName))
+            if (string.IsNullOrEmpty(userName) || options != PSCredentialUIOptions.ReadOnlyUserName)
             {
-                userPrompt = ConsoleHostUserInterfaceSecurityResources.PromptForCredential_User;
+                userPrompt = string.IsNullOrEmpty(userName)
+                    ? ConsoleHostUserInterfaceSecurityResources.PromptForCredential_User
+                    : StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_UserWithDefault, userName);
 
                 //
                 // need to prompt for user name first
@@ -91,13 +94,15 @@ namespace Microsoft.PowerShell
                 do
                 {
                     WriteToConsole(userPrompt, true);
-                    userName = ReadLine();
-                    if (userName == null)
+                    userNameFromConsole = ReadLine();
+                    if (userNameFromConsole == null)
                     {
                         return null;
                     }
                 }
-                while (userName.Length == 0);
+                while (string.IsNullOrEmpty(userName) && userNameFromConsole.Length == 0);
+
+                userName = userNameFromConsole;
             }
 
             passwordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_Password, userName
